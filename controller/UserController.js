@@ -1,3 +1,5 @@
+const User = require("../models/UserModel");
+
 function login(req, res) {
     const { email, password } = req.body;
 
@@ -25,16 +27,20 @@ function login(req, res) {
 
 }
 
-function signUp(req, res) {
-    const { email, password } = req.body;
+async function signUp(req, res) {
+    const { email, password,firstName,lastName } = req.body;
+    console.log(req.body)
 
     try {
-        if (!email || !password) {
+        if (!email || !password  || !firstName || !lastName) {
             res.status(422).json({
                 success: false,
-                message: "Email and password not exist"
+                message: "All fields are required"
             })
         }
+
+        const response=await User.create({firstName,lastName,email,password})
+        console.log(response)
         res.status(200).json({
             success: true,
             message: "Signup successful"
@@ -44,7 +50,6 @@ function signUp(req, res) {
         res.status(500).json({
             success: false,
             message: "Server not working"
-            // message: error.message
         })
     }
 
