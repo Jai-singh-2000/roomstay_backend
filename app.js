@@ -1,7 +1,12 @@
 const express=require("express")
+const dotenv=require("dotenv")
 const app=express()
 const PORT=3000
 const userRoutes=require("./routes/UserRouter")
+const connectDatabase=require("./config/connectDb");
+
+dotenv.config()
+connectDatabase()
 
 // middleware(server)
 app.use(express.json())
