@@ -8,7 +8,8 @@ const connectDatabase=require("./config/connectDb");
 dotenv.config()
 connectDatabase()
 
-// middleware(server)
+
+// middleware (Routes)
 app.use(express.json())
 app.use(userRoutes)
 
