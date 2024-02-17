@@ -1,6 +1,8 @@
+const jwtToken = require("jsonwebtoken");
 const Otp = require("../models/OtpModel");
 const User = require("../models/UserModel");
 const { generateOTP } = require("../utils/tools");
+
 
 async function loginController(req, res) {
     try {
@@ -21,10 +23,16 @@ async function loginController(req, res) {
             })
         }
 
+        const token = await jwtToken.sign({
+            id: existingUser._id,
+        }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" })
+
         res.status(200).json({
             success: true,
-            message: "Login successful"
+            message: "Login successfuly",
+            token: token
         })
+
 
     } catch (error) {
         console.log("Yaha aaya", error)
