@@ -53,6 +53,7 @@ async function signUpController(req, res) {
                 success: false,
                 message: "All fields are required"
             })
+            return;
 
         }
         else if (password !== confirmPassword) {
@@ -61,7 +62,7 @@ async function signUpController(req, res) {
                 success: false,
                 message: "Password and confirm password not matched"
             })
-
+            return;
         }
 
         const existingUser = await User.findOne({ email: email })
@@ -72,8 +73,11 @@ async function signUpController(req, res) {
                 success: false,
                 message: "User already exist"
             })
-
+            return;
         }
+
+
+        console.log("ayyaaas")
 
         const signUpResponse = await User.create({ firstName, lastName, email, password })
 
@@ -82,7 +86,7 @@ async function signUpController(req, res) {
 
         res.status(200).json({
             success: true,
-            message: "Signup successful",
+            message: `Otp send at ${email}`,
             otp: randomOtp
         })
 
@@ -101,21 +105,52 @@ async function signUpController(req, res) {
 }
 
 
-function otpController() {
+async function otpController(req, res) {
     try {
+
         const { email, otp } = req.body;
 
-        if (!email || !otp) {
-            res.status(422).json({
+        const existingUser = await User.findOne({ email: email })
+        console.log(existingUser, "exist")
+        if (!existingUser) {
+            res.status(401).json({
                 success: false,
-                message: "Something is missing",
-            });
+                message: "User does not exist"
+            })
+            return;
+        }
+
+        if (existingUser?.isVerified) {
+            res.status(200).json({
+                success: true,
+                message: "User already verified"
+            })
+            return;
+        }
+
+        const existingObj = await Otp.findOne({ email: email })
+
+        if (!existingObj) {
+            res.status(401).json({
+                success: false,
+                message: "Something is wrong"
+            })
+            return;
         }
 
 
-        const randomOtp = generateOTP();
 
-        console.log(randomOtp)
+
+        if (existingObj?.otp === String(otp)) {
+            const userResponse = await User?.findOneAndUpdate({ email: email }, { isVerified: true })
+            res.status(200).json({
+                success: true,
+                message: "User verified"
+            })
+            return;
+        }
+
+
 
 
     } catch (error) {
