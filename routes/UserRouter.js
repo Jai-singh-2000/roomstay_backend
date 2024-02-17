@@ -3,7 +3,7 @@ const route = express.Router()
 const userController = require("../controller/UserController")
 const authToken = require("../middlewares/tokenMiddleware")
 
-route.post("/login", userController.loginController)
+route.post("/login", authToken, userController.loginController)
 
 route.post("/signup", userController.signUpController)
 
