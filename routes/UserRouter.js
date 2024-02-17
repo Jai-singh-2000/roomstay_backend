@@ -11,5 +11,6 @@ route.post("/otpVerify", userController.otpController)
 
 route.post("/resendOtp",userController.resendOtpController )
 
+route.post("/forget", userController.forgetController)
 
 module.exports = route

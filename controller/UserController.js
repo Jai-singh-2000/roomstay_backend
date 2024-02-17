@@ -140,7 +140,6 @@ async function otpController(req, res) {
 
 
 
-
         if (existingObj?.otp === String(otp)) {
             const userResponse = await User?.findOneAndUpdate({ email: email }, { isVerified: true })
             res.status(200).json({
@@ -201,8 +200,43 @@ async function resendOtpController(req, res) {
     }
 }
 
+async function forgetController(req, res) {
 
+    try {
+
+        const { email } = req.body;
+        const existingUser = await User.findOne({ email: email });
+
+        if (!existingUser?.email) {
+            res.status(401).json({
+                success: false,
+                message: "User does not exist"
+            })
+        }
+
+        if (existingUser.email) {
+
+            const randomOtp = generateOTP();
+            const otpResponse = await Otp.findOneAndUpdate({ email: email }, { otp: randomOtp })
+
+            res.status(200).json({
+                success: true,
+                message: `Otp send at ${email}`,
+                otp: randomOtp
+            })
+            return;
+
+        }
+
+    } catch (error) {
+        res.status(401).json({
+            success: false,
+            message: "Something is error"
+        })
+    }
+
+}
 
 module.exports = {
-    loginController, signUpController, otpController, resendOtpController
+    loginController, signUpController, otpController, resendOtpController, forgetController
 }
