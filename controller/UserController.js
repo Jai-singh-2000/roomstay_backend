@@ -127,7 +127,47 @@ function otpController() {
     }
 }
 
+async function resendOtpController(req, res) {
+    try {
+        const { email } = req.body;
+
+
+
+        const existingUser = await User.findOne({ email: email })
+
+        if (!existingUser) {
+            res.status(401).json({
+                success: false,
+                message: "User does not exist"
+            })
+        }
+
+        if (!existingUser.isVerified) {
+            const randomOtp = generateOTP();
+            res.status(200).json({
+                success: true,
+                message: "Succuss",
+                otp: randomOtp
+            })
+
+        } else {
+            res.status(401).json({
+                success: false,
+                message: "User already verified"
+            })
+        }
+
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Server not working"
+        })
+    }
+}
+
+
 
 module.exports = {
-    loginController, signUpController, otpController
+    loginController, signUpController, otpController, resendOtpController
 }

@@ -9,5 +9,7 @@ route.post("/signup", userController.signUpController)
 
 route.post("/otp", userController.otpController)
 
+route.post("/resendOtp",userController.resendOtpController )
+
 
 module.exports = route
