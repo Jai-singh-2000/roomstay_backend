@@ -212,6 +212,7 @@ async function forgetController(req, res) {
                 success: false,
                 message: "User does not exist"
             })
+            
         }
 
         if (existingUser.email) {
