@@ -212,7 +212,7 @@ async function forgetController(req, res) {
                 success: false,
                 message: "User does not exist"
             })
-            
+
         }
 
         if (existingUser.email) {
@@ -238,6 +238,63 @@ async function forgetController(req, res) {
 
 }
 
+async function changePasswordController(req, res) {
+
+    try {
+
+        const { email, otp, password, confirmPassword } = req.body;
+        const existingUser = await User.findOne({ email: email });
+        const existOtp = await User.findOne({ email: email })
+
+        if (!email || !otp || !password || !confirmPassword) {
+            res.status(404).json({
+                message: "Something is missing",
+                status: false,
+            });
+            return;
+        }
+
+
+        if (!existOtp.otp) {
+            res.status(401).json({
+                success: false,
+                message: "something is wrong please try again"
+            })
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            res.status(409).json({
+                message: "Password and confirm password did not matched",
+                status: false,
+            });
+            return;
+        }
+
+        if (existOtp.otp !== String(otp)) {
+            res.status(401).json({
+                success: false,
+                message: "Otp did not match"
+            })
+            return;
+        }
+
+        const forgetUser = await User.findOneAndUpdate({ email: email, password: password })
+
+        res.status(200).json({
+            success:true,
+            message:"Password changed successfully"
+        })
+
+    } catch (error) {
+        res.status(401).json({
+            success: false,
+            message: "Something is error"
+        })
+    }
+
+}
+
 module.exports = {
-    loginController, signUpController, otpController, resendOtpController, forgetController
+    loginController, signUpController, otpController, resendOtpController, forgetController, changePasswordController
 }

@@ -13,4 +13,9 @@ route.post("/resendOtp",userController.resendOtpController )
 
 route.post("/forget", userController.forgetController)
 
+
+
+route.post("/changePassword", userController.changePasswordController)
+
+
 module.exports = route
