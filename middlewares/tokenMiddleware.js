@@ -1,17 +1,19 @@
+const jwt = require("jsonwebtoken")
+const authToken = (req, res, next) => {
+    try {
+        const token = req.headers.authorization.split(" ")[1]
+        const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        req.UserId = data.id
+        next();
 
-const authToken=(req,res,next)=>{
-    const token=req.headers.authorization.split(" ")[1]
-    
-    if(token==="good")
-    {
-        next()
-    }else{
-        res.status(401).json({
-            message:"Unauthorized User",
-            success:false
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
         })
     }
+
 }
 
 
-module.exports=authToken
+module.exports = authToken
