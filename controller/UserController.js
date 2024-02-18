@@ -104,7 +104,6 @@ async function signUpController(req, res) {
 
 }
 
-
 async function otpController(req, res) {
     try {
 
@@ -282,8 +281,8 @@ async function changePasswordController(req, res) {
         const forgetUser = await User.findOneAndUpdate({ email: email, password: password })
 
         res.status(200).json({
-            success:true,
-            message:"Password changed successfully"
+            success: true,
+            message: "Password changed successfully"
         })
 
     } catch (error) {
@@ -295,6 +294,32 @@ async function changePasswordController(req, res) {
 
 }
 
+async function userAccountDeleteController(req, res) {
+    try {
+
+        const userId = req.UserId;
+        console.log("aayaya")
+        const response = User.findOne({ _id: userId })
+        if(response){
+            const deleteAcc = User.deleteOne({_id: userId})
+            console.log(deleteAcc,"delete")
+        }
+        console.log(response, "resop")
+        res.status(200).json({
+            success: true,
+            message: "deleted successfully"
+        })
+        return;
+    } catch (error) {
+        console.log(error, "err")
+        res.status(401).json({
+            success: false,
+            message: "something is wrong please try again"
+        })
+        return;
+    }
+}
+
 module.exports = {
-    loginController, signUpController, otpController, resendOtpController, forgetController, changePasswordController
+    loginController, signUpController, otpController, resendOtpController, forgetController, changePasswordController, userAccountDeleteController
 }

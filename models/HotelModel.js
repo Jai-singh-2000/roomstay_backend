@@ -9,10 +9,6 @@ const hotelSchema=mongoose.Schema({
         type:String,
         required:true
     },
-    price:{
-        type:Number,
-        required:true
-    },
     image:{
         type:Array,
         required:true
