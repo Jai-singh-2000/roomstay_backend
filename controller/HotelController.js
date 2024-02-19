@@ -2,17 +2,15 @@ const User = require("../models/UserModel");
 const Hotel = require("../models/HotelModel");
 
 
-async function createHotel(req, res) {
+async function createHotelController(req, res) {
     try {
         const { name, location, image, description } = req.body;
 
-        const userId = req.UserId;
+        const userId = req.userId;
 
-        console.log(name, location, image, description, userId)
 
         const hotelObj = await Hotel.findOne({ User: userId, name: name })
 
-        console.log(hotelObj, "resop")
         if (hotelObj) {
             res.status(409).json({
                 success: false,
@@ -43,7 +41,7 @@ async function createHotel(req, res) {
     }
 }
 
-async function getAllHotel(res, res) {
+async function getAllHotelController(req, res) {
     try {
         // const {} = req.body; 
         const allHotels = await Hotel.find()
@@ -60,7 +58,37 @@ async function getAllHotel(res, res) {
     }
 }
 
+async function updateHotelController(req, res) {
+    try {
+
+        const { name, location, image, description } = req.body;
+        const userId = req.userId;
+        if (!name) {
+            res.status(401).json({
+                success: false,
+                message: "Somthing is error"
+            })
+            return;
+        }
+
+        const result = await Hotel.findOneAndUpdate({ User: userId, name: name }, { location: location, image: image, description: description })
+
+        console.log(result, "result")
+
+        res.status(200).json({
+            success: true,
+            message: "Hotel details update successfully"
+        })
+
+    } catch (error) {
+        res.status(401).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+}
+
 module.exports = {
-    createHotel, getAllHotel
+    createHotelController, getAllHotelController, updateHotelController
 }
 
