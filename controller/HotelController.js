@@ -60,7 +60,6 @@ async function getAllHotelController(req, res) {
 
 async function updateHotelController(req, res) {
     try {
-
         const { name, location, image, description } = req.body;
         const userId = req.userId;
         if (!name) {
@@ -88,7 +87,30 @@ async function updateHotelController(req, res) {
     }
 }
 
+async function deleteHotelController(req, res) {
+    try {
+        const { name } = req.body;
+        const hotelId = req.params;
+
+        const userId = req.userId;
+
+        const result = Hotel.deleteAndUpdate({ _id: hotelId, User: userId })
+        console.log(result, "mila")
+
+        res.status(200).json({
+            success: true,
+            message: "deleted"
+        })
+
+    } catch (error) {
+        res.status(401).json({
+            success: false,
+            message: "Internal server error"
+        })
+
+    }
+}
 module.exports = {
-    createHotelController, getAllHotelController, updateHotelController
+    createHotelController, getAllHotelController, updateHotelController, deleteHotelController
 }
 
