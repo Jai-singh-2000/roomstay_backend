@@ -43,18 +43,24 @@ async function createHotel(req, res) {
     }
 }
 
-// async function createHotel(req, res) {
-//     try {
+async function getAllHotel(res, res) {
+    try {
+        // const {} = req.body; 
+        const allHotels = await Hotel.find()
 
-//     } catch (error) {
-//         res.status().json({
-//             success:false,
-//             message:"Internal server error"
-//         })
-//     }
-// }
+        res.status(200).json({
+            success: true,
+            message: "Hotel fetch succussfully"
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+}
 
 module.exports = {
-    createHotel
+    createHotel, getAllHotel
 }
 
