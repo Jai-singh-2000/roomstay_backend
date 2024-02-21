@@ -58,6 +58,25 @@ async function getAllHotelController(req, res) {
     }
 }
 
+async function getHotelByIdController(req, res) {
+    try {
+        const { hid } = req.params;
+        const response = await Hotel.findOne({ _id: hid })
+        if (response) {
+            res.status(200).json({
+                success: true,
+                message: "Hotel find succussfully"
+            })
+            return;
+        }
+    } catch (error) {
+        res.status(401).json({
+            success: false,
+            message: "Somthing is error"
+        })
+    }
+}
+
 async function updateHotelController(req, res) {
     try {
         const { name, location, image, description } = req.body;
@@ -90,16 +109,16 @@ async function updateHotelController(req, res) {
 async function deleteHotelController(req, res) {
     try {
         const { name } = req.body;
-        const hotelId = req.params;
+        const { hid } = req.params;
 
         const userId = req.userId;
 
-        const result = Hotel.deleteAndUpdate({ _id: hotelId, User: userId })
+        const result = Hotel.deleteAndUpdate({ _id: hid })
         console.log(result, "mila")
 
         res.status(200).json({
             success: true,
-            message: "deleted"
+            message: "Hotel deleted successfully"
         })
 
     } catch (error) {
@@ -110,7 +129,10 @@ async function deleteHotelController(req, res) {
 
     }
 }
+
+
+
 module.exports = {
-    createHotelController, getAllHotelController, updateHotelController, deleteHotelController
+    createHotelController, getAllHotelController, updateHotelController, deleteHotelController, getHotelByIdController
 }
 
