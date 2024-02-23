@@ -1,4 +1,3 @@
-const User = require("../models/UserModel");
 const Hotel = require("../models/HotelModel");
 
 
