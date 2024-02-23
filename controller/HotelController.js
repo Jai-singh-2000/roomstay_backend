@@ -108,12 +108,9 @@ async function updateHotelController(req, res) {
 
 async function deleteHotelController(req, res) {
     try {
-        const { name } = req.body;
         const { hid } = req.params;
 
-        const userId = req.userId;
-
-        const result = Hotel.deleteAndUpdate({ _id: hid })
+        const result = await Hotel.deleteOne({ _id: hid })
         console.log(result, "mila")
 
         res.status(200).json({
