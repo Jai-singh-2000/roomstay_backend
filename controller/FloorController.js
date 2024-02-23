@@ -68,8 +68,49 @@ async function createFloorController(req, res) {
     }
 }
 
+async function deleteFloorController(req, res) {
+    try {
+        const { hotelId, floorNo } = req.body;
+
+        if (!hotelId || !floorNo) {
+            res.status(422).json({
+                success: false,
+                message: "Something is missing"
+            })
+        }
+
+
+        const existingFloor = await Floor.findOne({ Hotel: hotelId, floorNo: floorNo })
+        console.log(existingFloor,"check")
+
+        if (!existingFloor) {
+            res.status(400).json({
+                success: true,
+                message: "Floor does not exist"
+            })
+            return;
+        }
+
+        const floorResponse = await Floor.deleteOne({ Hotel: hotelId, floorNo: floorNo })
+
+        res.status(200).json({
+            success: true,
+            message: "Floor deleted successfully"
+        })
+
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success: true,
+            message: "Something is wrong"
+        })
+    }
+}
+
 
 module.exports = {
     getAllFloors,
-    createFloorController
+    createFloorController,
+    deleteFloorController
 }

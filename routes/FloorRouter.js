@@ -6,5 +6,7 @@ route.get("/getFloors/:hid", floorController.getAllFloors)
 
 route.post("/createFloor", floorController.createFloorController)
 
+route.delete("/deleteFloor", floorController.deleteFloorController)
+
 
 module.exports = route
