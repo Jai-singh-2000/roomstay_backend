@@ -1,4 +1,3 @@
-const User = require("../models/UserModel");
 const Hotel = require("../models/HotelModel");
 
 
@@ -45,11 +44,14 @@ async function getAllHotelController(req, res) {
     try {
         // const {} = req.body; 
         const allHotels = await Hotel.find()
-
+        console.log(allHotels)
         res.status(200).json({
             success: true,
-            message: "Hotel fetch succussfully"
+            message: "Hotel fetch succussfully",
+            data: allHotels || []
         })
+
+
     } catch (error) {
         res.status(500).json({
             success: false,
@@ -61,18 +63,25 @@ async function getAllHotelController(req, res) {
 async function getHotelByIdController(req, res) {
     try {
         const { hid } = req.params;
-        const response = await Hotel.findOne({ _id: hid })
-        if (response) {
+        const hotelObj = await Hotel.findOne({ _id: hid })
+        if (hotelObj) {
             res.status(200).json({
                 success: true,
-                message: "Hotel find succussfully"
+                message: "Hotel find succussfully",
+                data: hotelObj || {}
             })
-            return;
+        } else {
+            res.status(422).json({
+                success: true,
+                message: "Hotel did not found",
+                data: {}
+            })
         }
+
     } catch (error) {
         res.status(401).json({
             success: false,
-            message: "Somthing is error"
+            message: "Somthing is wrong"
         })
     }
 }
@@ -91,12 +100,17 @@ async function updateHotelController(req, res) {
 
         const result = await Hotel.findOneAndUpdate({ User: userId, name: name }, { location: location, image: image, description: description })
 
-        console.log(result, "result")
-
-        res.status(200).json({
-            success: true,
-            message: "Hotel details update successfully"
-        })
+        if (result) {
+            res.status(200).json({
+                success: true,
+                message: "Hotel details update successfully"
+            })
+        } else {
+            res.status(422).json({
+                success: true,
+                message: "Hotel did not found"
+            })
+        }
 
     } catch (error) {
         res.status(401).json({
@@ -111,7 +125,6 @@ async function deleteHotelController(req, res) {
         const { hid } = req.params;
 
         const result = await Hotel.deleteOne({ _id: hid })
-        console.log(result, "mila")
 
         res.status(200).json({
             success: true,

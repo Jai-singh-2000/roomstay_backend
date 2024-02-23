@@ -77,7 +77,6 @@ async function signUpController(req, res) {
         }
 
 
-        console.log("ayyaaas")
 
         const signUpResponse = await User.create({ firstName, lastName, email, password })
 
@@ -110,7 +109,6 @@ async function otpController(req, res) {
         const { email, otp } = req.body;
 
         const existingUser = await User.findOne({ email: email })
-        console.log(existingUser, "exist")
         if (!existingUser) {
             res.status(401).json({
                 success: false,
@@ -128,6 +126,7 @@ async function otpController(req, res) {
         }
 
         const existingObj = await Otp.findOne({ email: email })
+        console.log(existingObj?.otp === String(otp))
 
         if (!existingObj) {
             res.status(401).json({
@@ -140,15 +139,17 @@ async function otpController(req, res) {
 
 
         if (existingObj?.otp === String(otp)) {
-            const userResponse = await User?.findOneAndUpdate({ email: email }, { isVerified: true })
+            await User?.findOneAndUpdate({ email: email }, { isVerified: true })
             res.status(200).json({
                 success: true,
                 message: "User verified"
             })
-            return;
         }
 
-
+        res.status(409).json({
+            success: true,
+            message: "Something is wrong"
+        })
 
 
     } catch (error) {
@@ -177,6 +178,7 @@ async function resendOtpController(req, res) {
 
         if (!existingUser.isVerified) {
             const randomOtp = generateOTP();
+            await Otp?.findOneAndUpdate({ email: email }, { otp: randomOtp })
             res.status(200).json({
                 success: true,
                 message: "Succuss",
@@ -219,12 +221,14 @@ async function forgetController(req, res) {
             const randomOtp = generateOTP();
             const otpResponse = await Otp.findOneAndUpdate({ email: email }, { otp: randomOtp })
 
-            res.status(200).json({
-                success: true,
-                message: `Otp send at ${email}`,
-                otp: randomOtp
-            })
-            return;
+            if (otpResponse) {
+                res.status(200).json({
+                    success: true,
+                    message: `Otp send at ${email}`,
+                    otp: randomOtp
+                })
+                return;
+            }
 
         }
 
@@ -242,23 +246,12 @@ async function changePasswordController(req, res) {
     try {
 
         const { email, otp, password, confirmPassword } = req.body;
-        const existingUser = await User.findOne({ email: email });
-        const existOtp = await User.findOne({ email: email })
 
         if (!email || !otp || !password || !confirmPassword) {
             res.status(404).json({
                 message: "Something is missing",
                 status: false,
             });
-            return;
-        }
-
-
-        if (!existOtp.otp) {
-            res.status(401).json({
-                success: false,
-                message: "something is wrong please try again"
-            })
             return;
         }
 
@@ -270,7 +263,28 @@ async function changePasswordController(req, res) {
             return;
         }
 
-        if (existOtp.otp !== String(otp)) {
+        const existingUser = await User.findOne({ email: email })
+
+        if (!existingUser) {
+            res.status(401).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        const existOtpObj = await Otp.findOne({ email: email })
+
+        if (!existOtpObj.otp) {
+            res.status(401).json({
+                success: false,
+                message: "Something is missing"
+            })
+            return;
+        }
+
+
+
+        if (existOtpObj.otp !== String(otp)) {
             res.status(401).json({
                 success: false,
                 message: "Otp did not match"
@@ -278,14 +292,15 @@ async function changePasswordController(req, res) {
             return;
         }
 
-        const forgetUser = await User.findOneAndUpdate({ email: email, password: password })
-
+        const userObj = await User.findOneAndUpdate({ email: email, password: password })
+        console.log(userObj, "check")
         res.status(200).json({
             success: true,
             message: "Password changed successfully"
         })
 
     } catch (error) {
+        console.log(error)
         res.status(401).json({
             success: false,
             message: "Something is error"
@@ -296,20 +311,21 @@ async function changePasswordController(req, res) {
 
 async function userAccountDeleteController(req, res) {
     try {
+        const userId=req.userId;
 
-        const userId = req.UserId;
-        console.log("aayaya")
-        const response = User.findOne({ _id: userId })
-        if(response){
-            const deleteAcc = User.deleteOne({_id: userId})
-            console.log(deleteAcc,"delete")
+        const deleteAcc = await User.deleteOne({ _id: userId })
+        if (deleteAcc) {
+            res.status(200).json({
+                success: true,
+                message: "User deleted successfully"
+            })
+        }else{
+
+            res.status(409).json({
+                success: true,
+                message: "Something is wrong"
+            })
         }
-        console.log(response, "resop")
-        res.status(200).json({
-            success: true,
-            message: "deleted successfully"
-        })
-        return;
     } catch (error) {
         console.log(error, "err")
         res.status(401).json({

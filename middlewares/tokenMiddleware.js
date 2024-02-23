@@ -9,7 +9,7 @@ const authToken = (req, res, next) => {
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: "Internal server error"
+            message: "Token not available"
         })
     }
 
