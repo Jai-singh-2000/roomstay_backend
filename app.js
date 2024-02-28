@@ -7,9 +7,10 @@ const hotelRoutes = require("./routes/HotelRouter")
 const floorRoutes = require("./routes/FloorRouter")
 const connectDatabase = require("./config/connectDb");
 const authToken = require("./middlewares/tokenMiddleware")
+const mailConnection=require("./config/mail")
 dotenv.config()
 connectDatabase()
-
+mailConnection({mail:"jai.singh.corporate@gmail.com",subject:"Roomstay",text:"Ab to chal gaya"})
 
 // middleware (Routes)
 app.use(express.json())
