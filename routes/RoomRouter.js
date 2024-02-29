@@ -1,11 +1,16 @@
-// const express = require("express")
-// const route = express.Router()
-// const hotelController = require("../controller/HotelController")
-// route.post("/createHotel", hotelController, hotelController.createHotel)
-// // route.get("/getAllHotels",)
-// // route.get("/getHotelById",)
-// // route.put("/updateHotel",)
-// // route.delete("/deleteHotel",)
+const express = require("express")
+const route = express.Router()
 
+const {createRoomController,deleteRoomController,updateRoomController,getAllRoomsByHotelAndFloorController} = require("../controller/RoomController")
 
-// module.exports = route
+// POST METHOD || CREATE ROOM CONTROLLER
+
+route.post("/createRoom",createRoomController)
+
+// DELETE METHOD || DELETE ROOM CONTROLLER
+
+route.get("/deleteroom:roomId",deleteRoomController)
+route.put("/updateroom:roomId",updateRoomController)
+route.get("/getAllrooms:hotelId:floorId",getAllRoomsByHotelAndFloorController)
+
+module.exports = route
