@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 });
 
 
-async function mailConnection({ mail, subject, text }) {
+async function sendNewMail({ mail, subject, text }) {
     try {
 
         if (!mail || !subject || !text) return;
@@ -35,4 +35,4 @@ async function mailConnection({ mail, subject, text }) {
 
 }
 
-module.exports = mailConnection
+module.exports = sendNewMail

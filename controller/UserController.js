@@ -1,8 +1,8 @@
 const jwtToken = require("jsonwebtoken");
 const Otp = require("../models/OtpModel");
 const User = require("../models/UserModel");
+const sendNewMail = require("../config/mail");
 const { generateOTP } = require("../utils/tools");
-
 
 async function loginController(req, res) {
     try {
@@ -83,11 +83,10 @@ async function signUpController(req, res) {
 
         const randomOtp = generateOTP();
         const otpResponse = await Otp.create({ email: email, otp: randomOtp })
-
+        sendNewMail({mail:email,subject:"Signup at Roomstay",text:`Use this OTP to verify this account ${randomOtp}`})
         res.status(200).json({
             success: true,
             message: `Otp send at ${email}`,
-            otp: randomOtp
         })
 
 
