@@ -8,8 +8,8 @@ const floorRoutes = require("./routes/FloorRouter");
 const roomRoutes = require("./routes/RoomRouter");
 const connectDatabase = require("./config/connectDb");
 const authToken = require("./middlewares/tokenMiddleware");
-const mailConnection=require("./config/mail")
-// mailConnection({mail:"jai.singh.corporate@gmail.com",subject:"Roomstay",text:"Ab to chal gaya"})
+// const mailConnection=require("./config/mail")
+// mailConnection({mail:"surajgautam56878@gmail.com",subject:"Roomstay",text:"Ab to chal gaya"})
 dotenv.config();
 connectDatabase();
 const cors = require("cors");
