@@ -18,18 +18,14 @@ const roomSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    maxPeople: {
-        type: Number,
-        required: true,
-        default: 1
-    },
     description: {
         type: String,
         required: true
     },
     isBooked: {
         type: Boolean,
-        default: false
+        default: false,
+        required: true
     },
     amenities: {
         ac: {
@@ -41,10 +37,6 @@ const roomSchema = new mongoose.Schema({
             default: false
         },
         tv: {
-            type: Boolean,
-            default: false
-        },
-        powerBackup: {
             type: Boolean,
             default: false
         },
