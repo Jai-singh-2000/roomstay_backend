@@ -1,12 +1,12 @@
-const roomSchema = require("./../models/HotelModel")
 const Floor = require("../models/FloorModal")
 const Hotel = require("../models/HotelModel")
+const Room = require("../models/RoomModel")
 
 const createRoomController = async (req, res) => {
     try {
-        const { hotelId, roomNumber, roomType, price, maxPeople, description, amenities } = req.body;
+        const { hotelId, roomNumber, roomType, price, description, amenities } = req.body;
 
-        if (!hotelId || !roomNumber || !roomType || !price || !maxPeople) {
+        if (!hotelId || !roomNumber || !roomType || !price || !description) {
             return res.status(400).json({
                 success: false,
                 message: "Missing required fields"
@@ -16,13 +16,24 @@ const createRoomController = async (req, res) => {
         // Check if Hotel exists
         const existingHotel = await Hotel.findOne({ _id: hotelId });
         if (!existingHotel) {
-            
+
             res.status(422).json({
                 success: false,
                 message: "Hotel does not exist"
             });
 
-            return 
+            return
+        }
+
+        const roomExist = await Room.findOne({ roomNumber: roomNumber })
+        console.log(roomExist)
+        if (roomExist) {
+            res.status(422).json({
+                success: false,
+                message: "Room already exists"
+            });
+
+            return
         }
 
         // Create room
@@ -40,7 +51,7 @@ const createRoomController = async (req, res) => {
                 success: true,
                 message: "Room created successfully"
             });
-        }else{
+        } else {
             throw new Error("Somthing is wrong")
         }
     } catch (error) {
@@ -216,5 +227,6 @@ const getAllRoomsByHotelAndFloorController = async (req, res) => {
 //     }
 // }
 
-module.exports={createRoomController,deleteRoomController,updateRoomController,getAllRoomsByHotelAndFloorController
+module.exports = {
+    createRoomController, deleteRoomController, updateRoomController, getAllRoomsByHotelAndFloorController
 }

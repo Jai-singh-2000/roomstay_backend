@@ -7,7 +7,7 @@ const roomSchema = new mongoose.Schema({
         ref: "Hotel"
     },
     roomNumber: {
-        type: Number,
+        type: String,
         required: true
     },
     roomType: {
@@ -15,7 +15,7 @@ const roomSchema = new mongoose.Schema({
         required: true
     },
     price: {
-        type: Number,
+        type: String,
         required: true
     },
     description: {
@@ -33,6 +33,10 @@ const roomSchema = new mongoose.Schema({
             default: false
         },
         wifi: {
+            type: Boolean,
+            default: false
+        },
+        cctv: {
             type: Boolean,
             default: false
         },

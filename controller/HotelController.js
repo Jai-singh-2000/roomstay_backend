@@ -48,7 +48,6 @@ async function getMyHotels(req, res) {
     try {
         const userId = req.userId;
         const allHotels = await Hotel.find({ User: userId })
-        console.log(allHotels, "all hotel admin", userId)
 
         if (allHotels) {
             res.status(200).json({
