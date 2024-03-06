@@ -6,12 +6,15 @@ const authToken = require("../middlewares/tokenMiddleware")
 
 route.get("/getAllRooms", roomController.getAllRoomsController)
 
+route.get("/getRoomById/:roomId", roomController.getAllRoomsController)
+
 route.post("/createRoom", authToken, roomController.createRoomController)
 
 route.get("/deleteroom/:roomId", authToken, roomController.deleteRoomController)
 
 route.put("/updateroom/:roomId", authToken, roomController.updateRoomController)
 
-route.get("/getRoomById/:roomId", authToken, roomController.getAllRoomsController)
+// Used for admin dashboard
+route.get("/getMyHotelRooms/:hotel", authToken, roomController.getRoomsByHotelController)
 
 module.exports = route

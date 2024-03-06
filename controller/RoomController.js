@@ -150,7 +150,7 @@ const updateRoomController = async (req, res) => {
         // Update room details
         if (roomNumber) existingRoom.roomNumber = roomNumber;
         if (roomType) existingRoom.roomType = roomType;
-        if (price) existingRoom.price = price;
+        if (price) existingRoom.price = price;  
         if (maxPeople) existingRoom.maxPeople = maxPeople;
         if (description) existingRoom.description = description;
         if (amenities) existingRoom.amenities = amenities;
@@ -172,6 +172,7 @@ const updateRoomController = async (req, res) => {
     }
 };
 
+
 const getAllRoomsController = async (req, res) => {
     try {
         const rooms = await Room.find();
@@ -189,12 +190,31 @@ const getAllRoomsController = async (req, res) => {
     }
 };
 
+const getRoomsByHotelController = async (req, res) => {
+    try {
+        const { hotelId } = req.params;
+
+        const rooms = await Room.find({ hotel: hotelId });
+
+        res.status(200).json({
+            success: true,
+            data: rooms|| []
+        });
+        return;
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong"
+        });
+    }
+};
+
 
 const getRoomByIdController = async (req, res) => {
     try {
         const { roomId } = req.params;
 
-        // Check if hotelId and floorId are provided
         if (!roomId) {
             return res.status(422).json({
                 success: false,
@@ -202,7 +222,6 @@ const getRoomByIdController = async (req, res) => {
             });
         }
 
-        // Find all rooms with the given hotelId and floorId
         const room = await Room.findOne({ _id: roomId });
 
         if (room === null) {
@@ -218,8 +237,6 @@ const getRoomByIdController = async (req, res) => {
             });
         }
 
-
-
     } catch (error) {
         console.error(error);
         return res.status(500).json({
@@ -230,32 +247,7 @@ const getRoomByIdController = async (req, res) => {
 };
 
 
-// async function getHotelByIdController(req, res) {
-//     try {
-//         const { hid } = req.params;
-//         const hotelObj = await Hotel.findOne({ _id: hid })
-//         if (hotelObj) {
-//             res.status(200).json({
-//                 success: true,
-//                 message: "Hotel find succussfully",
-//                 data: hotelObj || {}
-//             })
-//         } else {
-//             res.status(422).json({
-//                 success: true,
-//                 message: "Hotel did not found",
-//                 data: {}
-//             })
-//         }
-
-//     } catch (error) {
-//         res.status(401).json({
-//             success: false,
-//             message: "Somthing is wrong"
-//         })
-//     }
-// }
 
 module.exports = {
-    createRoomController, deleteRoomController, updateRoomController, getAllRoomsController,getRoomByIdController
+    createRoomController, deleteRoomController, updateRoomController, getAllRoomsController,getRoomByIdController,getRoomsByHotelController
 }
