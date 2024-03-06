@@ -26,7 +26,6 @@ const createRoomController = async (req, res) => {
         }
 
         const roomExist = await Room.findOne({ roomNumber: roomNumber })
-        console.log(roomExist)
         if (roomExist) {
             res.status(422).json({
                 success: false,
@@ -62,6 +61,8 @@ const createRoomController = async (req, res) => {
         });
     }
 };
+
+
 const deleteRoomController = async (req, res) => {
     try {
         const { roomId } = req.params;
@@ -171,25 +172,53 @@ const updateRoomController = async (req, res) => {
     }
 };
 
-const getAllRoomsByHotelAndFloorController = async (req, res) => {
+const getAllRoomsController = async (req, res) => {
     try {
-        const { hotelId, floorId } = req.params;
-
-        // Check if hotelId and floorId are provided
-        if (!hotelId || !floorId) {
-            return res.status(400).json({
-                success: false,
-                message: "Hotel ID or Floor ID is missing"
-            });
-        }
-
-        // Find all rooms with the given hotelId and floorId
-        const rooms = await Room.find({ hotel: hotelId, floor: floorId });
+        const rooms = await Room.find();
 
         return res.status(200).json({
             success: true,
             data: rooms
         });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong"
+        });
+    }
+};
+
+
+const getRoomByIdController = async (req, res) => {
+    try {
+        const { roomId } = req.params;
+
+        // Check if hotelId and floorId are provided
+        if (!roomId) {
+            return res.status(422).json({
+                success: false,
+                message: "Missing required fields"
+            });
+        }
+
+        // Find all rooms with the given hotelId and floorId
+        const room = await Room.findOne({ _id: roomId });
+
+        if (room === null) {
+            res.status(200).json({
+                success: true,
+                data: room
+            });
+
+        } else {
+            res.status(404).json({
+                success: false,
+                message: "Room not found"
+            });
+        }
+
+
 
     } catch (error) {
         console.error(error);
@@ -228,5 +257,5 @@ const getAllRoomsByHotelAndFloorController = async (req, res) => {
 // }
 
 module.exports = {
-    createRoomController, deleteRoomController, updateRoomController, getAllRoomsByHotelAndFloorController
+    createRoomController, deleteRoomController, updateRoomController, getAllRoomsController,getRoomByIdController
 }
