@@ -198,5 +198,31 @@ const getAllRoomsByHotelAndFloorController = async (req, res) => {
 };
 
 
+// async function getHotelByIdController(req, res) {
+//     try {
+//         const { hid } = req.params;
+//         const hotelObj = await Hotel.findOne({ _id: hid })
+//         if (hotelObj) {
+//             res.status(200).json({
+//                 success: true,
+//                 message: "Hotel find succussfully",
+//                 data: hotelObj || {}
+//             })
+//         } else {
+//             res.status(422).json({
+//                 success: true,
+//                 message: "Hotel did not found",
+//                 data: {}
+//             })
+//         }
+
+//     } catch (error) {
+//         res.status(401).json({
+//             success: false,
+//             message: "Somthing is wrong"
+//         })
+//     }
+// }
+
 module.exports={createRoomController,deleteRoomController,updateRoomController,getAllRoomsByHotelAndFloorController
 }

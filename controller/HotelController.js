@@ -7,7 +7,6 @@ async function createHotelController(req, res) {
 
         const userId = req.userId;
 
-
         const hotelObj = await Hotel.findOne({ User: userId, name: name })
 
         if (hotelObj) {
@@ -26,11 +25,15 @@ async function createHotelController(req, res) {
             User: userId
         })
 
-        // console.log(result, "result")
-        res.status(201).json({
-            success: true,
-            message: "Hotel is created successfully"
-        })
+        if (result) {
+            res.status(201).json({
+                success: true,
+                message: "Hotel is created successfully"
+            })
+        } else {
+            throw new Error("Somthing is wrong")
+        }
+
 
     } catch (error) {
         res.status(401).json({
@@ -40,16 +43,23 @@ async function createHotelController(req, res) {
     }
 }
 
-async function getAllHotelController(req, res) {
+
+async function getMyHotels(req, res) {
     try {
-        // const {} = req.body; 
-        const allHotels = await Hotel.find()
-        console.log(allHotels)
-        res.status(200).json({
-            success: true,
-            message: "Hotel fetch succussfully",
-            data: allHotels || []
-        })
+        const userId = req.userId;
+        const allHotels = await Hotel.find({ User: userId })
+        console.log(allHotels, "all hotel admin", userId)
+
+        if (allHotels) {
+            res.status(200).json({
+                success: true,
+                message: "Hotel fetch succussfully",
+                data: allHotels || []
+            })
+
+        } else {
+            throw new Error("Somthing is wrong")
+        }
 
 
     } catch (error) {
@@ -60,31 +70,6 @@ async function getAllHotelController(req, res) {
     }
 }
 
-async function getHotelByIdController(req, res) {
-    try {
-        const { hid } = req.params;
-        const hotelObj = await Hotel.findOne({ _id: hid })
-        if (hotelObj) {
-            res.status(200).json({
-                success: true,
-                message: "Hotel find succussfully",
-                data: hotelObj || {}
-            })
-        } else {
-            res.status(422).json({
-                success: true,
-                message: "Hotel did not found",
-                data: {}
-            })
-        }
-
-    } catch (error) {
-        res.status(401).json({
-            success: false,
-            message: "Somthing is wrong"
-        })
-    }
-}
 
 async function updateHotelController(req, res) {
     try {
@@ -120,6 +105,7 @@ async function updateHotelController(req, res) {
     }
 }
 
+
 async function deleteHotelController(req, res) {
     try {
         const { hid } = req.params;
@@ -143,6 +129,6 @@ async function deleteHotelController(req, res) {
 
 
 module.exports = {
-    createHotelController, getAllHotelController, updateHotelController, deleteHotelController, getHotelByIdController
+    createHotelController, updateHotelController, deleteHotelController, getMyHotels
 }
 

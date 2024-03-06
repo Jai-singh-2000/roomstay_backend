@@ -5,13 +5,12 @@ const authToken = require("../middlewares/tokenMiddleware")
 
 route.post("/createHotel", authToken, hotelController.createHotelController)
 
-route.get("/getHotels", hotelController.getAllHotelController)
+route.get("/getHotels", authToken, hotelController.getMyHotels)
 
 route.put("/updateHotels", authToken, hotelController.updateHotelController)
 
 route.delete("/deleteHotel/:hid", authToken, hotelController.deleteHotelController)
 
-route.get("/getHotelById/:hid", hotelController.getHotelByIdController)
 
 
 module.exports = route
