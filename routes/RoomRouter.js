@@ -15,6 +15,6 @@ route.get("/deleteroom/:roomId", authToken, roomController.deleteRoomController)
 route.put("/updateroom/:roomId", authToken, roomController.updateRoomController)
 
 // Used for admin dashboard
-route.get("/getMyHotelRooms/:hotel", authToken, roomController.getRoomsByHotelController)
+route.get("/getMyHotelRooms/:hotelId", authToken, roomController.getRoomsByHotelController)
 
 module.exports = route

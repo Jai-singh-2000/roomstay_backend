@@ -25,7 +25,8 @@ const createRoomController = async (req, res) => {
             return
         }
 
-        const roomExist = await Room.findOne({ roomNumber: roomNumber })
+        const roomExist = await Room.findOne({ Hotel: hotelId, roomNumber: roomNumber })
+        console.log(roomExist,hotelId,roomNumber)
         if (roomExist) {
             res.status(422).json({
                 success: false,
@@ -150,7 +151,7 @@ const updateRoomController = async (req, res) => {
         // Update room details
         if (roomNumber) existingRoom.roomNumber = roomNumber;
         if (roomType) existingRoom.roomType = roomType;
-        if (price) existingRoom.price = price;  
+        if (price) existingRoom.price = price;
         if (maxPeople) existingRoom.maxPeople = maxPeople;
         if (description) existingRoom.description = description;
         if (amenities) existingRoom.amenities = amenities;
@@ -193,12 +194,13 @@ const getAllRoomsController = async (req, res) => {
 const getRoomsByHotelController = async (req, res) => {
     try {
         const { hotelId } = req.params;
+        // console.log(req.params)
 
-        const rooms = await Room.find({ hotel: hotelId });
-
+        const rooms = await Room.find({ Hotel: hotelId });
+        console.log(hotelId, "hote")
         res.status(200).json({
             success: true,
-            data: rooms|| []
+            data: rooms || []
         });
         return;
 
@@ -249,5 +251,5 @@ const getRoomByIdController = async (req, res) => {
 
 
 module.exports = {
-    createRoomController, deleteRoomController, updateRoomController, getAllRoomsController,getRoomByIdController,getRoomsByHotelController
+    createRoomController, deleteRoomController, updateRoomController, getAllRoomsController, getRoomByIdController, getRoomsByHotelController
 }
