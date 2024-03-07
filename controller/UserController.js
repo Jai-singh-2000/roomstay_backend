@@ -168,10 +168,14 @@ async function resendOtpController(req, res) {
         if (!existingUser.isVerified) {
             const randomOtp = generateOTP();
             await Otp?.findOneAndUpdate({ email: email }, { otp: randomOtp });
+            sendNewMail({
+                mail: email,
+                subject: "Signup at Roomstay",
+                text: `Resend OTP to verify this account ${randomOtp}`,
+            });
             res.status(200).json({
                 success: true,
                 message: "Succuss",
-                otp: randomOtp,
             });
         } else {
             res.status(401).json({
@@ -192,7 +196,7 @@ async function forgetController(req, res) {
         const { email } = req.body;
         const existingUser = await User.findOne({ email: email });
 
-        if (!existingUser?.email) {
+        if (!existingUser) {
             res.status(401).json({
                 success: false,
                 message: "User does not exist",
@@ -201,19 +205,26 @@ async function forgetController(req, res) {
 
         if (existingUser.email) {
             const randomOtp = generateOTP();
-            const otpResponse = await Otp.findOneAndUpdate(
+             await Otp.findOneAndUpdate(
                 { email: email },
                 { otp: randomOtp }
             );
+            sendNewMail({
+                mail: email,
+                subject: "Forget Password at Roomstay",
+                text: `OTP to verify this account ${randomOtp}`,
+            });
 
-            if (otpResponse) {
-                res.status(200).json({
-                    success: true,
-                    message: `Otp send at ${email}`,
-                    otp: randomOtp,
-                });
-                return;
-            }
+            res.status(200).json({
+                success: true,
+                message: `Otp send at ${email}`,
+            });
+        }
+        else {
+            res.status(401).json({
+                success: false,
+                message: "something is error",
+            });
         }
     } catch (error) {
         res.status(401).json({
@@ -274,7 +285,6 @@ async function changePasswordController(req, res) {
             email: email,
             password: password,
         });
-        console.log(userObj, "check");
         res.status(200).json({
             success: true,
             message: "Password changed successfully",
