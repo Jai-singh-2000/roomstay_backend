@@ -5,7 +5,7 @@ const authToken = require("../middlewares/tokenMiddleware")
 
 route.post("/createHotel", authToken, hotelController.createHotelController)
 
-route.get("/getHotels", authToken, hotelController.getMyHotels)
+route.get("/getMyHotels", authToken, hotelController.getMyHotels)
 
 route.put("/updateHotels", authToken, hotelController.updateHotelController)
 

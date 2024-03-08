@@ -7,7 +7,8 @@ const authToken = (req, res, next) => {
         next();
 
     } catch (error) {
-        res.status(500).json({
+        console.log(error)
+        res.status(401).json({
             success: false,
             message: "Token not available"
         })

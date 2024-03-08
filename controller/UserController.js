@@ -47,7 +47,6 @@ async function loginController(req, res) {
 
 async function signUpController(req, res) {
   const { email, password, confirmPassword, firstName, lastName } = req.body;
-  console.log("chlaa");
 
   try {
     if (!email || !password || !firstName || !lastName) {
