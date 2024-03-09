@@ -3,6 +3,8 @@ const route = express.Router()
 const userController = require("../controller/UserController")
 const authToken = require("../middlewares/tokenMiddleware")
 
+route.get("/tokenVerify", authToken, userController.tokenVerificationController)
+
 route.post("/login", userController.loginController)
 
 route.post("/signup", userController.signUpController)
