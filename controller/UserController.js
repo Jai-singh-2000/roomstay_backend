@@ -4,6 +4,27 @@ const User = require("../models/UserModel");
 const sendNewMail = require("../config/mail");
 const { generateOTP } = require("../utils/tools");
 
+async function tokenVerificationController(req, res) {
+  try {
+    const userId=req.userId;
+    const existingUser = await User.findOne({ _id: userId });
+    
+
+
+    return res.status(200).json({
+      success: true,
+      message: "User is valid",
+      user:existingUser
+    });
+  } catch (error) {
+    console.error("Error occurred:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Some thing went wrong",
+    });
+  }
+}
+
 async function loginController(req, res) {
   try {
     const { email, password } = req.body;
@@ -334,4 +355,5 @@ module.exports = {
   forgetController,
   changePasswordController,
   userAccountDeleteController,
+  tokenVerificationController
 };
