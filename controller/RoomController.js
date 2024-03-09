@@ -4,6 +4,7 @@ const Room = require("../models/RoomModel")
 const createRoomController = async (req, res) => {
     try {
         const { hotelId, roomNumber, roomType, price, description, amenities } = req.body;
+        const userId=req.userId;
 
         if (!hotelId || !roomNumber || !roomType || !price || !description) {
             return res.status(400).json({
@@ -37,6 +38,7 @@ const createRoomController = async (req, res) => {
 
         // Create room
         const newRoom = await Room.create({
+            User:userId,
             Hotel: hotelId,
             roomNumber: roomNumber,
             roomType: roomType,

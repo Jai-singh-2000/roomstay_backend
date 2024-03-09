@@ -6,17 +6,17 @@ const { generateOTP } = require("../utils/tools");
 
 async function tokenVerificationController(req, res) {
   try {
-    const userId=req.userId;
+    const userId = req.userId;
     const existingUser = await User.findOne({ _id: userId });
-console.log(existingUser,"exist userr")
-    if(existingUser){
+    console.log(existingUser, "exist userr")
+    if (existingUser) {
       res.status(200).json({
         success: true,
         message: "User is valid",
-        user:existingUser
+        user: existingUser
       });
     }
-    else{
+    else {
       res.status(401).json({
         success: false,
         message: "User is not valid",
@@ -44,7 +44,7 @@ async function loginController(req, res) {
     }
 
     const existingUser = await User.findOne({ email: email });
-    if(!existingUser){
+    if (!existingUser) {
       return res.status(401).json({
         success: false,
         message: "user does not exist",
@@ -82,7 +82,7 @@ async function loginController(req, res) {
 }
 
 async function signUpController(req, res) {
-  const { email, password, confirmPassword, firstName, lastName } = req.body;
+  const { email, password, confirmPassword, firstName, lastName, isAdmin } = req.body;
 
   try {
     if (!email || !password || !firstName || !lastName) {
@@ -114,7 +114,16 @@ async function signUpController(req, res) {
       lastName,
       email,
       password,
+      isAdmin
     });
+
+    if (!signUpResponse) {
+      res.status(400).json({
+        success: true,
+        message: "Something is wrong",
+      });
+      return;
+    }
 
     const randomOtp = generateOTP();
     const otpResponse = await Otp.create({ email: email, otp: randomOtp });
@@ -332,8 +341,12 @@ async function changePasswordController(req, res) {
 async function userAccountDeleteController(req, res) {
   try {
     const userId = req.userId;
-    
-    
+
+    const isHotelDeleted = await Hotel.deleteMany({ User: userId })
+    console.log(isHotelDeleted, "hotel deleted")
+
+    const isRoomDeleted = await Room.deleteMany({ User: userId })
+    console.log(isRoomDeleted, "room deleted")
 
     const deleteAcc = await User.deleteOne({ _id: userId });
     if (deleteAcc) {
@@ -341,7 +354,7 @@ async function userAccountDeleteController(req, res) {
         success: true,
         message: "User deleted successfully",
       });
-    } 
+    }
     else {
       throw new Error("Something is wrong")
     }
