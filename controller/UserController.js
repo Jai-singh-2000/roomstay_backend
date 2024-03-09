@@ -303,6 +303,8 @@ async function changePasswordController(req, res) {
 async function userAccountDeleteController(req, res) {
   try {
     const userId = req.userId;
+    
+    
 
     const deleteAcc = await User.deleteOne({ _id: userId });
     if (deleteAcc) {
@@ -310,11 +312,9 @@ async function userAccountDeleteController(req, res) {
         success: true,
         message: "User deleted successfully",
       });
-    } else {
-      res.status(409).json({
-        success: true,
-        message: "Something is wrong",
-      });
+    } 
+    else {
+      throw new Error("Something is wrong")
     }
   } catch (error) {
     console.log(error, "err");
