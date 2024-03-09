@@ -1,6 +1,8 @@
 const jwtToken = require("jsonwebtoken");
 const Otp = require("../models/OtpModel");
 const User = require("../models/UserModel");
+const Hotel=require("../models/HotelModel")
+const Room=require("../models/RoomModel")
 const sendNewMail = require("../config/mail");
 const { generateOTP } = require("../utils/tools");
 
