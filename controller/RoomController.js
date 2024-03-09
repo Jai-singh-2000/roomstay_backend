@@ -1,4 +1,3 @@
-const Floor = require("../models/FloorModal")
 const Hotel = require("../models/HotelModel")
 const Room = require("../models/RoomModel")
 
@@ -137,16 +136,7 @@ const updateRoomController = async (req, res) => {
             existingRoom.hotel = hotelId;
         }
 
-        if (floorId) {
-            const existingFloor = await Floor.findOne({ _id: floorId });
-            if (!existingFloor) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Floor not found"
-                });
-            }
-            existingRoom.floor = floorId;
-        }
+
 
         // Update room details
         if (roomNumber) existingRoom.roomNumber = roomNumber;
