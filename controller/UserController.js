@@ -8,39 +8,46 @@ async function loginController(req, res) {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      res.status(422).json({
+      return res.status(422).json({
         success: false,
-        message: "Email and password not exist",
+        message: "Email and passoword are requird",
       });
     }
 
     const existingUser = await User.findOne({ email: email });
-
-    if (existingUser?.password !== password) {
-      res.status(401).json({
+    if(!existingUser){
+      return res.status(401).json({
         success: false,
-        message: "Invalid credentials",
+        message: "user does not exist",
+      });
+    }
+    console.log("userexist", existingUser)
+
+    if (existingUser.password !== password) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password",
       });
     }
 
     const token = await jwtToken.sign(
       {
-        id: existingUser?._id,
+        id: existingUser._id,
       },
       process.env.JWT_SECRET_KEY,
       { expiresIn: "1d" }
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "Login successfuly",
+      message: "Login successful",
       token: token,
     });
   } catch (error) {
-    console.log("Yaha aaya", error);
-    res.status(500).json({
+    console.error("Error occurred:", error);
+    return res.status(500).json({
       success: false,
-      message: "Server not working",
+      message: "Some thing went wrong",
     });
   }
 }
