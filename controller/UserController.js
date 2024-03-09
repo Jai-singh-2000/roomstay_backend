@@ -8,14 +8,22 @@ async function tokenVerificationController(req, res) {
   try {
     const userId=req.userId;
     const existingUser = await User.findOne({ _id: userId });
-    
+console.log(existingUser,"exist userr")
+    if(existingUser){
+      res.status(200).json({
+        success: true,
+        message: "User is valid",
+        user:existingUser
+      });
+    }
+    else{
+      res.status(401).json({
+        success: false,
+        message: "User is not valid",
+      });
+    }
 
 
-    return res.status(200).json({
-      success: true,
-      message: "User is valid",
-      user:existingUser
-    });
   } catch (error) {
     console.error("Error occurred:", error);
     return res.status(500).json({
