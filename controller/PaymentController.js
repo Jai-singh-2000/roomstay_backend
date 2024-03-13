@@ -55,9 +55,13 @@ const paymentInit = async (req, res) => {
     }
 
     res.status(200).json({
-      order_id: id,
-      currency: currency,
-      amount: amount,
+      success: true,
+      data: {
+        order_id: id,
+        currency: currency,
+        amount: amount,
+        KEY_ID:process.env.RAZORPAY_KEY_ID
+      },
     });
   } catch (error) {
     res.status(500).json({
