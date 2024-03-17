@@ -30,7 +30,6 @@ const userSchema = mongoose.Schema({
         default: false
     },
     plan: {
-        enum: ["free", "silver", "gold"],
         type: String,
         required: true,
         default: "free"
