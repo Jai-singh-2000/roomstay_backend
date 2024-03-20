@@ -1,8 +1,8 @@
 const jwtToken = require("jsonwebtoken");
 const Otp = require("../models/OtpModel");
 const User = require("../models/UserModel");
-const Hotel=require("../models/HotelModel")
-const Room=require("../models/RoomModel")
+const Hotel = require("../models/HotelModel");
+const Room = require("../models/RoomModel");
 const sendNewMail = require("../config/mail");
 const { generateOTP } = require("../utils/tools");
 
@@ -10,22 +10,19 @@ async function tokenVerificationController(req, res) {
   try {
     const userId = req.userId;
     const existingUser = await User.findOne({ _id: userId });
-    console.log(existingUser, "exist userr")
+
     if (existingUser) {
       res.status(200).json({
         success: true,
         message: "User is valid",
-        user: existingUser
+        user: existingUser,
       });
-    }
-    else {
+    } else {
       res.status(401).json({
         success: false,
         message: "User is not valid",
       });
     }
-
-
   } catch (error) {
     console.error("Error occurred:", error);
     return res.status(500).json({
@@ -38,6 +35,7 @@ async function tokenVerificationController(req, res) {
 async function loginController(req, res) {
   try {
     const { email, password } = req.body;
+    console.log("email", email);
     if (!email || !password) {
       return res.status(422).json({
         success: false,
@@ -52,7 +50,7 @@ async function loginController(req, res) {
         message: "user does not exist",
       });
     }
-    console.log("userexist", existingUser)
+    console.log("userexist", existingUser);
 
     if (existingUser.password !== password) {
       return res.status(401).json({
@@ -84,7 +82,8 @@ async function loginController(req, res) {
 }
 
 async function signUpController(req, res) {
-  const { email, password, confirmPassword, firstName, lastName, isAdmin } = req.body;
+  const { email, password, confirmPassword, firstName, lastName, isAdmin } =
+    req.body;
 
   try {
     if (!email || !password || !firstName || !lastName) {
@@ -116,7 +115,7 @@ async function signUpController(req, res) {
       lastName,
       email,
       password,
-      isAdmin
+      isAdmin,
     });
 
     if (!signUpResponse) {
@@ -340,15 +339,44 @@ async function changePasswordController(req, res) {
   }
 }
 
+async function getProfile(req, res) {
+  try {
+    const userId = req.userId;
+    const existingUser = await User.findOne({ _id: userId });
+
+    if (existingUser) {
+      delete existingUser.createdAt;
+      delete existingUser.updatedAt;
+      delete existingUser.__v;
+
+      res.status(200).json({
+        success: true,
+        user: existingUser,
+      });
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+}
+
 async function userAccountDeleteController(req, res) {
   try {
     const userId = req.userId;
 
-    const isHotelDeleted = await Hotel.deleteMany({ User: userId })
-    console.log(isHotelDeleted, "hotel deleted")
+    const isHotelDeleted = await Hotel.deleteMany({ User: userId });
+    console.log(isHotelDeleted, "hotel deleted");
 
-    const isRoomDeleted = await Room.deleteMany({ User: userId })
-    console.log(isRoomDeleted, "room deleted")
+    const isRoomDeleted = await Room.deleteMany({ User: userId });
+    console.log(isRoomDeleted, "room deleted");
 
     const deleteAcc = await User.deleteOne({ _id: userId });
     if (deleteAcc) {
@@ -356,9 +384,8 @@ async function userAccountDeleteController(req, res) {
         success: true,
         message: "User deleted successfully",
       });
-    }
-    else {
-      throw new Error("Something is wrong")
+    } else {
+      throw new Error("Something is wrong");
     }
   } catch (error) {
     console.log(error, "err");
@@ -378,5 +405,6 @@ module.exports = {
   forgetController,
   changePasswordController,
   userAccountDeleteController,
-  tokenVerificationController
+  tokenVerificationController,
+  getProfile,
 };
