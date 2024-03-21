@@ -53,13 +53,14 @@ async function loginController(req, res) {
     console.log("userexist", existingUser);
 
     if (existingUser.password !== password) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: "Invalid password",
       });
+      return;
     }
 
-    const token = await jwtToken.sign(
+    const token = jwtToken.sign(
       {
         id: existingUser._id,
       },
@@ -67,14 +68,15 @@ async function loginController(req, res) {
       { expiresIn: "1d" }
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: "Login successful",
       token: token,
+      user: existingUser,
     });
   } catch (error) {
     console.error("Error occurred:", error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: "Some thing went wrong",
     });
