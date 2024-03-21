@@ -61,6 +61,7 @@ async function loginController(req, res) {
     const token = jwtToken.sign(
       {
         id: existingUser?._id,
+        email: email,
       },
       process.env.JWT_SECRET_KEY,
       { expiresIn: "2d" }
@@ -371,12 +372,13 @@ async function getProfile(req, res) {
 async function userAccountDeleteController(req, res) {
   try {
     const userId = req.userId;
-
+    const email = req.email;
     const isHotelDeleted = await Hotel.deleteMany({ User: userId });
-    console.log(isHotelDeleted, "hotel deleted");
 
     const isRoomDeleted = await Room.deleteMany({ User: userId });
-    console.log(isRoomDeleted, "room deleted");
+
+    const isOtpDeleted = await Otp.deleteMany({ email: email });
+    console.log(isOtpDeleted, "otp deleted");
 
     const deleteAcc = await User.deleteOne({ _id: userId });
     if (deleteAcc) {
@@ -385,7 +387,10 @@ async function userAccountDeleteController(req, res) {
         message: "User deleted successfully",
       });
     } else {
-      throw new Error("Something is wrong");
+      res.status(400).json({
+        success: true,
+        message: "User not deleted",
+      });
     }
   } catch (error) {
     console.log(error, "err");

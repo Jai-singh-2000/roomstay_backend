@@ -15,6 +15,7 @@ const authToken = (req, res, next) => {
     }
 
     req.userId = data?.id;
+    req.email = data?.email; 
     next();
   
   } catch (error) {
