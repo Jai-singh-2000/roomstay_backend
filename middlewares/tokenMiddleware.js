@@ -1,20 +1,29 @@
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 const authToken = (req, res, next) => {
-    try {
-        const token = req.headers.authorization.split(" ")[1]
-        const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        req.userId = data.id
-        next();
+  try {
+    const SECRET_KEY_JWT = process.env.JWT_SECRET_KEY;
+    const token = req.headers.authorization.split(" ")[1];
 
-    } catch (error) {
-        console.log(error)
-        res.status(401).json({
-            success: false,
-            message: "Token not available"
-        })
+    const data = jwt.verify(token, SECRET_KEY_JWT);
+
+    if (!data?.id) {
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized user",
+      });
+      return;
     }
 
-}
+    req.userId = data?.id;
+    next();
+  
+  } catch (error) {
+    console.log(error, "token error");
+    res.status(500).json({
+      success: false,
+      message: "Token verify error",
+    });
+  }
+};
 
-
-module.exports = authToken
+module.exports = authToken;

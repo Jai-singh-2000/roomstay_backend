@@ -35,7 +35,6 @@ async function tokenVerificationController(req, res) {
 async function loginController(req, res) {
   try {
     const { email, password } = req.body;
-    console.log("email", email);
     if (!email || !password) {
       return res.status(422).json({
         success: false,
@@ -50,7 +49,6 @@ async function loginController(req, res) {
         message: "user does not exist",
       });
     }
-    console.log("userexist", existingUser);
 
     if (existingUser.password !== password) {
       res.status(401).json({
@@ -62,10 +60,10 @@ async function loginController(req, res) {
 
     const token = jwtToken.sign(
       {
-        id: existingUser._id,
+        id: existingUser?._id,
       },
       process.env.JWT_SECRET_KEY,
-      { expiresIn: "1d" }
+      { expiresIn: "2d" }
     );
 
     res.status(200).json({
