@@ -17,6 +17,8 @@ route.post("/forget", userController.forgetController)
 
 route.post("/changePassword", userController.changePasswordController)
 
+route.get("/profile", authToken,userController.getProfile)
+
 route.delete("/deleteUser", authToken, userController.userAccountDeleteController)
 
 module.exports = route

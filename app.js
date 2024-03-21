@@ -15,11 +15,12 @@ const cors = require("cors");
 // middleware (Routes)
 app.use(express.json());
 app.use(cors());
+console.log("process.env.PORT", process.env.PORT, "aaya");
 app.use(userRoutes);
 app.use(authToken, hotelRoutes);
 app.use(roomRoutes);
-app.use(authToken,paymentRoutes);
+app.use(authToken, paymentRoutes);
 
-app.listen(PORT, () => {
-  console.log("Server start on ", PORT);
+app.listen(process.env.PORT || PORT, () => {
+  console.log("Server start on ", process.env.PORT || PORT);
 });

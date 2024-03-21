@@ -8,8 +8,8 @@ const roomSchema = new mongoose.Schema({
     },
     Hotel: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: "Hotel"
+        ref: "Hotel",
+        required: true
     },
     roomNumber: {
         type: String,
