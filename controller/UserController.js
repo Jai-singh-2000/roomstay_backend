@@ -340,6 +340,63 @@ async function changePasswordController(req, res) {
   }
 }
 
+async function updatePasswordController(req, res) {
+  try {
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+    const userId = req.userId;
+
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      res.status(404).json({
+        message: "Credentials is missing",
+        status: false,
+      });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      res.status(409).json({
+        message: "Password and confirm password didn't matched",
+        status: false,
+      });
+      return;
+    }
+
+    const existingUser = await User.findOne({ _id: userId });
+
+    if (existingUser.password !== oldPassword) {
+      res.status(409).json({
+        message: "Old password did not matched",
+        status: false,
+      });
+      return;
+    }
+
+    const updateUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { password: newPassword }
+    );
+
+    if (updateUser) {
+      res.status(200).json({
+        success: true,
+        message: "Password updated successfully",
+      });
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Something is error",
+      });
+    }
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+}
+
 async function getProfile(req, res) {
   try {
     const userId = req.userId;
@@ -409,6 +466,7 @@ module.exports = {
   resendOtpController,
   forgetController,
   changePasswordController,
+  updatePasswordController,
   userAccountDeleteController,
   tokenVerificationController,
   getProfile,
