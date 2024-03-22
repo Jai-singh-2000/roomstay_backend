@@ -1,16 +1,13 @@
-const express = require("express")
-const route = express.Router()
-const hotelController = require("../controller/HotelController")
-const authToken = require("../middlewares/tokenMiddleware")
+const express = require("express");
+const route = express.Router();
+const hotelController = require("../controller/HotelController");
 
-route.post("/createHotel", authToken, hotelController.createHotelController)
+route.post("/createHotel", hotelController.createHotelController);
 
-route.get("/getMyHotels", authToken, hotelController.getMyHotels)
+route.get("/getMyHotels", hotelController.getMyHotels);
 
-route.put("/updateHotels", authToken, hotelController.updateHotelController)
+route.put("/updateHotels", hotelController.updateHotelController);
 
-route.delete("/deleteHotel/:hid", authToken, hotelController.deleteHotelController)
+route.delete("/deleteHotel/:hid", hotelController.deleteHotelController);
 
-
-
-module.exports = route
+module.exports = route;

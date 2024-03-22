@@ -1,8 +1,8 @@
 const jwtToken = require("jsonwebtoken");
 const Otp = require("../models/OtpModel");
 const User = require("../models/UserModel");
-const Hotel=require("../models/HotelModel")
-const Room=require("../models/RoomModel")
+const Hotel = require("../models/HotelModel");
+const Room = require("../models/RoomModel");
 const sendNewMail = require("../config/mail");
 const { generateOTP } = require("../utils/tools");
 
@@ -10,22 +10,19 @@ async function tokenVerificationController(req, res) {
   try {
     const userId = req.userId;
     const existingUser = await User.findOne({ _id: userId });
-    console.log(existingUser, "exist userr")
+
     if (existingUser) {
       res.status(200).json({
         success: true,
         message: "User is valid",
-        user: existingUser
+        user: existingUser,
       });
-    }
-    else {
+    } else {
       res.status(401).json({
         success: false,
         message: "User is not valid",
       });
     }
-
-
   } catch (error) {
     console.error("Error occurred:", error);
     return res.status(500).json({
@@ -52,31 +49,33 @@ async function loginController(req, res) {
         message: "user does not exist",
       });
     }
-    console.log("userexist", existingUser)
 
     if (existingUser.password !== password) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: "Invalid password",
       });
+      return;
     }
 
-    const token = await jwtToken.sign(
+    const token = jwtToken.sign(
       {
-        id: existingUser._id,
+        id: existingUser?._id,
+        email: email,
       },
       process.env.JWT_SECRET_KEY,
-      { expiresIn: "1d" }
+      { expiresIn: "2d" }
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: "Login successful",
       token: token,
+      user: existingUser,
     });
   } catch (error) {
     console.error("Error occurred:", error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: "Some thing went wrong",
     });
@@ -84,7 +83,8 @@ async function loginController(req, res) {
 }
 
 async function signUpController(req, res) {
-  const { email, password, confirmPassword, firstName, lastName, isAdmin } = req.body;
+  const { email, password, confirmPassword, firstName, lastName, isAdmin } =
+    req.body;
 
   try {
     if (!email || !password || !firstName || !lastName) {
@@ -116,7 +116,7 @@ async function signUpController(req, res) {
       lastName,
       email,
       password,
-      isAdmin
+      isAdmin,
     });
 
     if (!signUpResponse) {
@@ -340,15 +340,102 @@ async function changePasswordController(req, res) {
   }
 }
 
+async function updatePasswordController(req, res) {
+  try {
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+    const userId = req.userId;
+
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      res.status(404).json({
+        message: "Credentials is missing",
+        status: false,
+      });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      res.status(409).json({
+        message: "Password and confirm password didn't matched",
+        status: false,
+      });
+      return;
+    }
+
+    const existingUser = await User.findOne({ _id: userId });
+
+    if (existingUser.password !== oldPassword) {
+      res.status(409).json({
+        message: "Old password did not matched",
+        status: false,
+      });
+      return;
+    }
+
+    const updateUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { password: newPassword }
+    );
+
+    if (updateUser) {
+      res.status(200).json({
+        success: true,
+        message: "Password updated successfully",
+      });
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Something is error",
+      });
+    }
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+}
+
+async function getProfile(req, res) {
+  try {
+    const userId = req.userId;
+    const existingUser = await User.findOne({ _id: userId });
+
+    if (existingUser) {
+      delete existingUser.createdAt;
+      delete existingUser.updatedAt;
+      delete existingUser.__v;
+
+      res.status(200).json({
+        success: true,
+        user: existingUser,
+      });
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+}
+
 async function userAccountDeleteController(req, res) {
   try {
     const userId = req.userId;
+    const email = req.email;
+    const isHotelDeleted = await Hotel.deleteMany({ User: userId });
 
-    const isHotelDeleted = await Hotel.deleteMany({ User: userId })
-    console.log(isHotelDeleted, "hotel deleted")
+    const isRoomDeleted = await Room.deleteMany({ User: userId });
 
-    const isRoomDeleted = await Room.deleteMany({ User: userId })
-    console.log(isRoomDeleted, "room deleted")
+    const isOtpDeleted = await Otp.deleteMany({ email: email });
+    console.log(isOtpDeleted, "otp deleted");
 
     const deleteAcc = await User.deleteOne({ _id: userId });
     if (deleteAcc) {
@@ -356,9 +443,11 @@ async function userAccountDeleteController(req, res) {
         success: true,
         message: "User deleted successfully",
       });
-    }
-    else {
-      throw new Error("Something is wrong")
+    } else {
+      res.status(400).json({
+        success: true,
+        message: "User not deleted",
+      });
     }
   } catch (error) {
     console.log(error, "err");
@@ -377,6 +466,8 @@ module.exports = {
   resendOtpController,
   forgetController,
   changePasswordController,
+  updatePasswordController,
   userAccountDeleteController,
-  tokenVerificationController
+  tokenVerificationController,
+  getProfile,
 };
