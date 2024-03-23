@@ -7,6 +7,7 @@ const hotelRoutes = require("./routes/HotelRouter");
 const roomRoutes = require("./routes/RoomRouter");
 const paymentRoutes = require("./routes/PaymentRouter");
 const orderRoutes = require("./routes/OrderRouter");
+const planRoutes= require("./routes/PlanRouter");
 const connectDatabase = require("./config/connectDb");
 const authToken = require("./middlewares/tokenMiddleware");
 dotenv.config();
@@ -20,6 +21,7 @@ app.use(userRoutes);
 app.use(authToken, hotelRoutes);
 app.use(roomRoutes);
 app.use(authToken, paymentRoutes);
+app.use(authToken, planRoutes);
 app.use(authToken, orderRoutes);
 
 app.get("/", (req, res) => {

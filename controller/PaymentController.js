@@ -57,7 +57,7 @@ const paymentInit = async (req, res) => {
     res.status(200).json({
       success: true,
       data: {
-        order_id: id,
+        razorpayId: id,
         currency: currency,
         amount: amount,
         KEY_ID:process.env.RAZORPAY_KEY_ID
