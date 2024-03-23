@@ -1,7 +1,9 @@
-const express=require("express")
-const route=express.Router()
-const planController=require("../controller/PlanController")
+const express = require("express");
+const route = express.Router();
+const planController = require("../controller/PlanController");
 
-route.get("/plans",planController.getAllPlans)
+route.get("/plans", planController.getAllPlans);
 
-module.exports=route;
+route.post("/createPlan", planController.addNewPlan);
+
+module.exports = route;
