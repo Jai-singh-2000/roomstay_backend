@@ -13,8 +13,8 @@ const adminOrderSchema = new mongoose.Schema(
       required: true,
     },
     plan: {
-      enum: ["silver", "gold"],
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Plan",
       required: true,
     },
   },
