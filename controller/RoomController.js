@@ -168,7 +168,7 @@ const updateRoomController = async (req, res) => {
 
 const getAllRoomsController = async (req, res) => {
     try {
-        const rooms = await Room.find();
+        const rooms = await Room.find({});
 
         return res.status(200).json({
             success: true,
