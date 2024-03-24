@@ -57,13 +57,15 @@ const paymentInit = async (req, res) => {
     res.status(200).json({
       success: true,
       data: {
-        order_id: id,
+        paymentId: payment?._id,
+        razorpayId: id,
         currency: currency,
         amount: amount,
-        KEY_ID:process.env.RAZORPAY_KEY_ID
+        KEY_ID: process.env.RAZORPAY_KEY_ID,
       },
     });
   } catch (error) {
+    console.log(error)
     res.status(500).json({
       success: false,
       message: "Internal Server Error",

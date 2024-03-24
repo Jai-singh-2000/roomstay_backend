@@ -32,6 +32,14 @@ const paymentSchema = new mongoose.Schema(
       require: true,
       default: Date.now(),
     },
+    razorpayPaymentId: {
+      type: String,
+      default:null
+    },
+    razorpaySignature: {
+      type: String,
+        default:null
+    },
   },
   { timestamps: true }
 );
