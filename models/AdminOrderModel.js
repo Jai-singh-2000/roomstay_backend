@@ -12,15 +12,15 @@ const adminOrderSchema = new mongoose.Schema(
       ref: "Payment",
       required: true,
     },
-    plan:{
-        enum:["silver","gold"],
-        type: String,
-        required: true,
-    }
+    plan: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Plan",
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-const UserOrder = mongoose.model("UserOrder", adminOrderSchema);
+const AdminOrder = mongoose.model("AdminOrder", adminOrderSchema);
 
-module.exports = UserOrder;
+module.exports = AdminOrder;
