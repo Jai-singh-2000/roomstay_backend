@@ -251,7 +251,7 @@ async function forgetController(req, res) {
 
     if (existingUser.email) {
       const randomOtp = generateOTP();
-      await Otp.findOneAndUpdate({ email: email }, { otp: randomOtp });
+      const otpObj=await Otp.create({ email: email, otp: randomOtp });
       sendNewMail({
         mail: email,
         subject: "Forget Password at Roomstay",
@@ -306,8 +306,9 @@ async function changePasswordController(req, res) {
     }
 
     const existOtpObj = await Otp.findOne({ email: email });
+    console.log(existOtpObj);
 
-    if (!existOtpObj.otp) {
+    if (!existOtpObj?.otp) {
       res.status(401).json({
         success: false,
         message: "Something is missing",
@@ -315,7 +316,7 @@ async function changePasswordController(req, res) {
       return;
     }
 
-    if (existOtpObj.otp !== String(otp)) {
+    if (String(existOtpObj.otp) !== String(otp)) {
       res.status(401).json({
         success: false,
         message: "Otp did not match",
@@ -332,7 +333,7 @@ async function changePasswordController(req, res) {
       message: "Password changed successfully",
     });
   } catch (error) {
-    console.log(error);
+    console.log(error, "ye hai error");
     res.status(401).json({
       success: false,
       message: "Something is error",
@@ -387,7 +388,6 @@ async function updatePasswordController(req, res) {
         message: "Something is error",
       });
     }
-    
   } catch (error) {
     console.log(error);
     res.status(500).json({
